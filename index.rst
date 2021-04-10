@@ -41,9 +41,9 @@ Welcome to AutoKernel Docs!
   :caption: Demos
   :name: sec-demo
 
-  demo/multi_backend/index
-  demo/gemm_optimization_x86
-  demo/cv_op
+  demo_guides/multi_backend/index
+  demo_guides/gemm_optimization_x86
+  demo_guides/cv_op
 
 
 
