@@ -19,41 +19,38 @@ Welcome to AutoKernel Docs!
 
 .. toctree::
   :maxdepth: 1
-  :caption: Quick Start
-  :name: sec-quick-start
+  :caption: Installation
+  :name: sec-installation
 
-  quick_start/install
-  quick_start/docker
-  quick_start/tengine
-  quick_start/halide
-  quick_start/autokernel_plugin_tengine
-  quick_start/gemm
-  quick_start/cv_op
-  quick_start/autosearch
-
-
+  installation/install_from_source
+  installation/install_from_docker
 
 .. toctree::
-  :maxdepth: 1
-  :caption: Multi Backend Demos
-  :name: sec-demo_guides
-
-  demo_guides/arm64_cpu
-  demo_guides/x86_cpu
-  demo_guides/opencl
-  demo_guides/cuda
-
-.. toctree::
-  :maxdepth: 1
+  :maxdepth: 2
   :caption: Tutorials
-  :name: sec-source-compile
+  :name: sec-tutorial
 
-  tutorials/tutorial
+  tutorials/quick_start
+  tutorials/tengine
+  tutorials/halide/index
+  tutorials/autosearch
+
+
+.. toctree::
+  :maxdepth: 2
+  :caption: Demos
+  :name: sec-demo
+
+  demo/multi_backend/index
+  demo/gemm_optimization_x86
+  demo/cv_op
+
+
 
 
 .. toctree::
   :maxdepth: 1
   :caption: Blog
 
-  blog/ai_compiler
-
+  blog/autokernel_optimize_gemm_over_200_times_faster
+  blog/ai_compiler_overview
