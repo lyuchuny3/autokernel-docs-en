@@ -1,4 +1,4 @@
-# Algorithm of Halide  
+# Algorithm
 Every Halide program has two parts, an algorithm and a schedule. The algorithm defines what is computed at each pixel. Here we present the constructs that Halide provides to write an algorithm.  
 
 ## Func  
