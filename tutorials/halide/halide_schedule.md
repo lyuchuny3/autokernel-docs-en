@@ -26,6 +26,7 @@ Schedules within one stage define the order of iteration domain of function, usi
 
 ## Schedules across stages: Call Schedule
 In addition to the order of evaluation within the domain of each function, the schedule also specifies the granularity with which to interleave the computation and storage of each function with the domain of the functions that call it. We call these choices the call schedule. In the language of Halide’s schedules, we control the call schedule of each function with annotations as followings:
+
 | primitives    | Description |
 |--------------|--------------------|
 |compute_at(consumer, dim)|Specify when the producer stage is computed with respect to the consumer stage.||
