@@ -9,19 +9,19 @@ Recently, AutoKernel, an automatic operator optimization tool dedicated to lower
 ![autokernel.png](../Images/GEMM/autokernel.png)  
   
 ____
-### Features of AutoKernel  
+### Features of AutoKernel        
 * Low threshold: no knowledge threshold for bottom-level optimization compilation.   
 * Simple and easy to use: Providing a docker environment, no need to install the environment, the plugin is integrated into the inference framework Tengine with one click.   
 * High efficiency: no need to write optimized assembly, one-click to generate optimized code and one click to deploy.     
 
 AutoKernel uses Halide, an automatic code generation project widely used in the industry, to automatically generate the underlying code by inputting calculation descriptions and scheduling strategies. AutoKernel supports one-click deployment of the generated automatic optimization operator to the inference framework Tengine in the form of a plugin.    
 _____
-### Optimization tutorial of GEMM  
+### Optimization tutorial of GEMM       
 Here, this tutorial will lead you to optimize the matrix multiplication GEMM step by step. There is no need to manually code, compile complicated and lengthy low-level assembly code, but only need a dozen lines of concise scheduling code.
   
 ![gemm.jpg](../Images/GEMM/gemm.jpg)  
   
-**Two optimization goals：**  
+**Two optimization goals：**         
 Before explaining the optimization steps in detail, let's talk about the essence of optimization. When we were talking about "optimization", what did the bottom layer of the computer do? What is the "bottleneck" of optimization? Why can performance be improved through a wave of "optimization operations"? How does Halide used by AutoKernel achieve automatic optimization?    
 To answer these questions, we need to understand the basic architecture of the hardware and understand how the hardware works, so that when implementing algorithms in software, we should consider using some of the characteristics of the hardware as much as possible to achieve efficient and extreme optimization.     
   
@@ -31,7 +31,7 @@ The figure listed above is a typical memory processor hierarchy: the main memory
 
 The second optimization goal is to **improve parallelism**: make full use of SIMD for instruction vectorization and multi-core parallelism. Most modern CPUs support SIMD (Single Instruction Multiple Data). In the same CPU cycle, SIMD can execute the same operation/instruction on multiple values at the same time. If we vectorize on 4 data points and calculate 4 data at a time, we can theoretically achieve 4 times speedup.    
    
-**Operating environment preparation：**   
+**Operating environment preparation：**          
 AutoKernel provides a docker image, with the running environment being configured, and user can run the demo code directly after entering the docker：     
 ```  
 # Pull mirror 
@@ -44,7 +44,7 @@ cd AutoKernel/doc/tutorials/data/
 ```  
    
 The build.sh in the directory is the execution script of the demo. To run, user need to specify the optimization step 'step'. The optional step is from 1 to 7, where step=1 is not optimized by default, and step=7 is the most optimized.      
-**Effect of optimization：**   
+**Effect of optimization：**         
 ```   
 # run demo  
 ./build.sh 1  
@@ -55,8 +55,8 @@ The following figure shows the optimization effect on a computer with Intel(R) C
    
 ![Figure1.png](../Images/GEMM/Figure1.png)  
    
-**Detailed optimizatio steps：**  
-**STEP 1**  
+**Detailed optimizatio steps：**         
+**STEP 1**          
 The first step is without any optimization. Use Halide language to directly describe the calculation process of GEMM.  
 ```   
 1. Var x,y;
@@ -71,7 +71,7 @@ step =  1
 M N K = 640 640 640     err 0.00        [rep 50] autokernel | blas      240.8523 ms     1.1376 ms   
 ```   
 
-**STEP 2**  
+**STEP 2**          
 In this step, we use tiled tiles. The purpose of Tiling is to make full use of the cache. If the original loop is large, the tiles are changed to small pieces of data to calculate, so that the data calculated each time can stay in the cache more comfortably, without repeated eviction (repeat adding and deleting data in the cache) . The reorder operation is performed after the block is divided, the order of the two nested loops is exchanged, and the purpose is to make the innermost memory access friendly. We divide the x and y dimensions into 16x8 small blocks to calculate：  
 ```   
 1.	gemm.update()  
@@ -87,7 +87,7 @@ M N K = 640 640 640     err 0.00        [rep 50] halide | blas  81.8148 ms      
 ```
 > Performance has been optimized from 240ms to 82ms, an increase of nearly 3 times.      
    
-**STEP 3**   
+**STEP 3**        
 We add 'vectorize' based on the previous step. Vectorization is to convert several scalar calculations (scale) into a vector calculation (vector), making full use of SIMD vector instructions. Most modern CPUs support SIMD (Single Instruction Multiple Data). In the same CPU cycle, SIMD can execute the same operation/instruction on multiple values at the same time.        
 ```   
 1.	gemm.update()  
@@ -104,7 +104,7 @@ M N K = 640 640 640     err 0.00        [rep 50] autokernel | blas      27.5433 
 ```     
 >The performance was optimized from 82ms to 27ms, which was accelerated by nearly 3 times. It can be found that around the two optimization purposes mentioned above: optimizing memory access and improving parallelism, from step1 to step3, the performance has been improved by nearly 9 times.       
    
-**STEP 4**   
+**STEP 4**          
 The scheduling strategy adds parallelization on the basis of step3. Parallelizing a loop is to divide each iteration of the loop into multiple threads or processors for simultaneous processing. Each thread processes through the code segment (loop body), but processes different data.        
 ```   
 1.	gemm(x, y) += A(k, y) * B(x, k);  
@@ -122,7 +122,7 @@ M N K = 640 640 640     err 0.00        [rep 50] autokernel | blas      7.2605 m
 ```   
 > After adding parallelization, build.sh specifies four threads by default, and the performance is directly increased by nearly 4 times, from 27ms to 7.3ms.   
    
-**STEP 5**  
+**STEP 5**            
 The scheduling strategy adds unroll expansion on the basis of the previous step. If the statements in the loop body have no data-related dependencies, loop unrolling can increase the chance of concurrent execution, make full use of registers, and reduce the number of times each operation memory is loaded and saved during the loop.          
 ```   
 1.	gemm.update()  
@@ -141,12 +141,12 @@ M N K = 640 640 640     err 0.00        [rep 50] autokernel | blas      4.7617 m
 ```   
 > After unroll is expanded, the performance is optimized from 7.3ms to 4.8ms.        
 
-**STEP 6**  
+**STEP 6**            
 The previous block is divided into 16 x 8 small kernels. This step is first divided into 16 x 32 blocks, and then each block is divided into 16 x 8 sub-blocks. We merge the two outermost loops into one layer and parallelize this layer. The calculation description in this step adds a prod function to define the calculation of sub-blocks. The calculation formula of the prod function is the same as the total gemm. We use compute_at to specify the calculation of prod under the one dimension, and the calculation of prod is 16x8. kernel, the general logic is as follows:       
    
 ![step6.png](../Images/GEMM/step6.png)   
    
-**Codes are listed below：**   
+**Codes are listed below：**           
 ```   
 1.	Func prod;  
 2.	prod(x, y) += A(k, y) * B(x, k);  
@@ -177,12 +177,12 @@ M N K = 640 640 640     err 0.00        [rep 50] autokernel | blas      3.1824 m
 ```  
 > The performance of this step has been optimized by nearly 80 times from STEP1, and the performance is getting closer and closer to OpenBlas.        
 
-**STEP 7**  
+**STEP 7**            
 The operation added in this step is to rearrange the data of matrix B to make the memory read smoother when calculating the small kernel 16x8. Because the x dimension of the small kernel is divided according to 16, the x dimension of rearranged data B is also rearranged according to 16.      
    
 ![interleave.png](../Images/GEMM/interleave.png)   
   
-**Codes are listed below：**   
+**Codes are listed below：**           
 ```   
 1.	Func B_interleave("B"), Bs("Bs");  
 2.	Bs(x, y, xo) = B(xo * 16 + x, y);  
