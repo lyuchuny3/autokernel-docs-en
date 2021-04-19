@@ -53,4 +53,4 @@ Welcome to AutoKernel Docs!
   :caption: Blog
 
   blog/autokernel_optimize_gemm_over_200_times_faster
-  blog/ai_compiler_overview
+  blog/ai_compiler overview
