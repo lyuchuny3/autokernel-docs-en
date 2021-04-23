@@ -1,6 +1,6 @@
 # Quick start for AutoKernel Plugin
 
-Using docker image to configuration development environment    
+Using autokernel docker
 
 ```
 # Pull the image (may take a while, please be patient)   
@@ -35,15 +35,14 @@ autokernel_plugin/src/
 `-- plugin_init.cpp
 ```
 We can see that there are two folders in the `src` directory, each of which contains:   
--xxx_gen.cc, use Halide language operator description (algorithm) and scheduling strategy (schedule)   
--build.sh is used to compile xxx_gen    
--xxx.h and xxx.cpp are operator implementations encapsulated by the Tengine operator interface     
+- `xxx_gen.cc`, use Halide language operator description (algorithm) and scheduling strategy (schedule)   
+- `build.sh` is used to compile xxx_gen    
+- `xxx.h` and xxx.cpp are operator implementations encapsulated by the Tengine operator interface     
 
 One-click operator assembly code generation    
 ```
 cd AutoKernel/autokernel_plugin
-find . -name "*.sh" | xargs chmod +x
-./scripts/generate.sh  #Automatically generate operator assembly file    
+bash ./scripts/generate.sh
 ```
 When finishing this step, we can see that there are two more automatically generated files in the original directory:   
 ```bash
@@ -86,4 +85,4 @@ max time is 55.932 ms, min time is 55.932 ms
 --------------------------------------
 ALL TEST DONE
 ```
-As you can see, the output shows that the function in the `AutoKernel plugin` is called.    
+As you can see, the output shows that `AutoKernel plugin` is called.    

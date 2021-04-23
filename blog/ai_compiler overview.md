@@ -1,7 +1,7 @@
-# AutoKernel: To know more about Ai Compiler
-## 一、The overview of Ai Compiler
-In recent years, AI technology oriented with machine learning and deep learning has been rapidly developed, and deep neural network has been widely used in various industries:  
-1. CV (computer vision): target detection, scene recognition, image segmentation, etc.  
+# AutoKernel: To know more about AI Compiler
+## Overview of AI Compiler
+In recent years, AI technology oriented with machine learning and deep learning has been rapidly developed, and deep neural networks have been widely used in various domains:  
+1. CV (computer vision): object detection, scene recognition, image segmentation, etc.  
 2. Smart voice: voice recognition, voiceprint recognition, etc.  
 3. NLP (Natural Language Processing): automatic search engine, dialogue service robot, text classification, intelligent translation, etc.  
 4. Scientific research: applied in many research fields such as physics, biology, medicine, etc. High-energy particle collision classification, cosmic celestial map data analysis, galaxy shape modeling, protein folding prediction of biological structure, precision medical treatment and disease prediction.      
@@ -16,15 +16,18 @@ However, in order for deep learning algorithms to be implemented, they must be d
        
 When it comes to how to deploy the models trained by these training frameworks to different terminal hardware, this requires a deep learning neural network compiler to solve this problem.    
 
-Before the emergence of neural network compilers, we used traditional compilers.    
-**Traditional Compilers：**  
+Before the emergence of neural network compilers, we used traditional compilers.
+
+**Traditional Compilers：**
+
 Take LLVM (low level virtual machine) as an example, its input is high-level programming language source code, and its output is machine code. It consists of a series of modular compiler components and tool chains.   
 LLVM is divided into three parts: front-end, middle-end (optimized) and back-end through modules. Whenever a new programming language appears, only the corresponding front-end needs to be developed, and the programming language is converted into the intermediate representation of LLVM; similarly, when a new hardware architecture appears, only the corresponding back-end needs to be developed and connected to the intermediate representation of LLVM.  
 The modularization avoids the problem of compiler adaptability caused by the refurbishment of the programming language and CPU architecture, and greatly simplifies the development of the compiler.   
     
 ![Figure3.png](/Images/Compiler/Figure3.png)   
      
-**Neutral Network Compiler：**  
+**Neutral Network Compiler：**
+
 Its input is the model definition file trained by the deep learning training framework, and the output is the code that can be efficiently executed on different hardware. 
       
 ![Figure6.png](../Images/Compiler/Figure6.png)  
@@ -46,32 +49,34 @@ It is composed of four levels from top to bottom：
 >_Since the concept of the deep learning compiler was put forward, various types of compilers have emerged in an endless stream。_  
       
 ___
-## 二、The story of TVM      
+## TVM
 In the wave of rapid development of compilers, one of the most prominent one is TVM (Tensor Virtual Machine)。  
 
 TVM was first proposed in 2017 as a compiler stack for deep learning systems.     
 
-The design of the first generation of TVM draws on the design ideas of the traditional compiler framework LLVM, and the design abstracts the middle presentation layer. Different models only need to develop corresponding front-end interfaces, and different back-ends only need to develop corresponding back-end interfaces.     
+The design of the first generation of TVM draws on the design ideas of the traditional compiler framework LLVM, and the design abstracts the middle presentation layer. Different models only need to develop corresponding front-end interfaces, and different back-ends only need to develop corresponding back-end interfaces.
+
 TVM is called Tensor Virtual Machine, which belongs to the operator level. It is mainly used for tensor calculation and provides an intermediate representation of the underlying calculation independent of the hardware. Various methods (circular block, cache optimization, etc.) are used to optimize the corresponding calculation. The first generation of layer-level representation is called NNVM (Neural Network Virtual Machine). The design goal of NNVM is to convert the calculation graph from a different deep learning framework into a unified intermediate representation (IR) of the calculation graph and optimize it.     
 
-The first generation of static images has certain defects:    
-1. Cannot support control flow well, such as branch jump, loop, etc.     
-2. Can not support the input shape of the calculation graph, depending on the input tensor size model, such as word2vec.       
+The first generation of static images has certain defects:
+1. Cannot support control flow well, such as branch jump, loop, etc.
+2. Can not support the input shape of the calculation graph, depending on the input tensor size model, such as word2vec.
 
-Although Tensorflow has a control interface like tf.cond.Tf.while_loop to solve the first problem to some extent, tf.fold solves the second problem, but this method is not particularly friendly for rookies who have just come into contact with deep learning framework.      
+Although Tensorflow has a control interface like tf.cond.Tf.while_loop to solve the first problem to some extent, tf.fold solves the second problem, but this method is not particularly friendly for rookies who have just come into contact with deep learning framework.
 
-The dynamic graphs that appear later abandon the traditional way of calculating graphs that are defined first and then executed, and adopt the mode defined by the calculation graph at runtime. This kind of calculation graph is called a dynamic graph.    
-The graph calculation layer of the second-generation TVM becomes Relay VM. The main difference between Relay and the first-generation graph calculation indicator NNVM is that in addition to supporting dataflow (static graph), Relay IR can better solve control flow (dynamic graph). It is not only an intermediate representation of a calculation graph, but also supports automatic differentiation.       
-    
+The dynamic graphs that appear later abandon the traditional way of calculating graphs that are defined first and then executed, and adopt the mode defined by the calculation graph at runtime. This kind of calculation graph is called a dynamic graph.
+
+The graph calculation layer of the second-generation TVM becomes Relay VM. The main difference between Relay and the first-generation graph calculation indicator NNVM is that in addition to supporting dataflow (static graph), Relay IR can better solve control flow (dynamic graph). It is not only an intermediate representation of a calculation graph, but also supports automatic differentiation.
+
 ![Figure19.png](../Images/Compiler/Figure19.png)  
-      
+
 To sum up, the current structure of TVM is:      
-1. The highest level supports mainstream deep learning front-end frameworks, including TensorFlow, MXNet, Pytorch, etc.     
+1. The highest level supports mainstream deep learning front-end frameworks, including TensorFlow, MXNet, Pytorch, etc.
 2. Relay IR supports differentiability. This level performs graph fusion, data rearrangement and other graph optimization operations.       
 3. Based on the tensor quantization calculation graph and the hardware primitive-level optimization according to the back-end, autoTVM explores the search space according to the optimization goal and finds the optimal solution.     
 4. The backend supports ARM, CUDA/Metal/OpenCL, accelerator VTA (Versatile Tensor Accelerator).       
-___  
-## 三、Halide  
+
+## Halide  
 Halide was proposed in 2012 and is mainly used for automatic optimization. Embedded in C++, it is a programming language specially designed for image processing by MIT researchers. The Halide language is easy to write, simple in grammar, clear in data structure, and can automatically optimize the code, so that the program can achieve better execution efficiency.     
 The core idea of its design is to separate algorithm and scheduling. The advantage of this is that in the case of a given algorithm, you only need to adjust its Schedule scheduling options, without having to rewrite the algorithm to implement a different schedule. When adjusting the schedule and exploring the design space, there is no worry that the correctness of the calculation will change due to the rewriting of the algorithm.    
 
@@ -84,8 +89,9 @@ The Schedule part tells the machine when to allocate memory and how to calculate
 > _Different scheduling strategies consider the trade-off between repeated redundant calculations and locality。_    
     
 ___
-## 四、AutoKernel  
-Whether the deep learning model can be successfully applied to the terminal and meet the product needs, a key indicator is the reasoning performance of the neural network model.    
+## AutoKernel  
+Whether the deep learning model can be successfully applied to the terminal and meet the product needs, a key indicator is the reasoning performance of the neural network model.
+
 The current high-performance operator calculation library is mainly developed manually by high-performance computing optimization engineers. However, the continuous emergence of new algorithms/hardware has led to a huge workload of operator-level optimization and development. At the same time, optimizing the code is not a simple task. It requires engineers to be proficient in computer architecture as well as to be familiar with the calculation process of operators.    
 There are few talents, high demand, and high technical threshold. Therefore, we believe that operator optimization and automation is the general trend in the future. The original intention of proposing AutoKernel is to automate this process, start small, optimize at the operator level, and realize the automatic generation of optimized code.     
       
@@ -104,8 +110,7 @@ Correspondingly, the AutoKernel at the operator level is mainly divided into thr
 ![Figure13.png](../Images/Compiler/Figure13.png)    
 > _The Tengine object layer is connected to different neural network models. The layer-level NNIR includes model analysis and layer optimization, and the operator level includes the high-performance computing library (HCL lib)._      
      
-AutoKernel Plugin is mainly divided into two parts: generation and deployment. In the generation part, Hallid is used to fill in the algorithm description and scheduling strategy, and the back-end type is specified during execution (which basically covers the current mainstream back-ends).     
-The deployment part is packaged as a Tengine library and directly called.      
+AutoKernel Plugin is mainly divided into two parts: generation and deployment. In the generation part, Halid is used to fill in the algorithm description and scheduling strategy, and the back-end type is specified during execution (which basically covers the current mainstream back-ends). The deployment part is packaged as a Tengine library and directly called.
      
 ![Figure14.png](../Images/Compiler/Figure14.png)    
       

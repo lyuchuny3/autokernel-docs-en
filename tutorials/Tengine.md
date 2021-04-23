@@ -1,6 +1,6 @@
 # Tengine: Quick start    
 
-Tengine is a lightweight deep neural network inference engine. This document will take the classification model (Squezenet model) as an example (based on the x86 Linux platform) to take you quickly to get started with Tengine.   
+[Tengine](https://github.com/OAID/Tengine) is a lightweight deep neural network inference framework. This document will take the classification model (Squezenet model) as an example (based on the x86 Linux platform) to take you quickly to get started with Tengine.   
 
 ## Deep learning neural network calculation process    
 
@@ -91,12 +91,12 @@ This example will follow the neural network inference calculation process to dem
 
 ## More Tengine Examples
 More Tengine application examples are in [Tengine/examples](https://github.com/OAID/Tengine/tree/tengine-lite/examples):   
--Classification task  
--Face key point detection task  
--ssd target detection task    
--retinaface face detection task   
--yolact instance segmentation task   
--yolov3 target detection task   
--yolov4-tiny target detection task   
--openpose human body gesture recognition task   
--crnn Chinese character recognition task    
+- Classification
+- Face key point detection
+- ssd target detection
+- retinaface face detection
+- yolact instance segmentation
+- yolov3 target detection
+- yolov4-tiny target detection
+- openpose human body gesture recognition
+- crnn Chinese character recognition
