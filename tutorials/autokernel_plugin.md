@@ -1,4 +1,4 @@
-# Quick start for AutoKernel Plugin
+# AutoKernel Plugin
 
 Using autokernel docker
 

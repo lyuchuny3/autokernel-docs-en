@@ -28,10 +28,11 @@ Welcome to AutoKernel Docs!
   :caption: Tutorials
   :name: sec-tutorial
 
+  tutorials/autosearch
   tutorials/autokernel_plugin
   tutorials/tengine
   tutorials/halide/index
-  tutorials/autosearch
+
 
 
 .. toctree::

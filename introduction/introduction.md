@@ -1,5 +1,4 @@
 # AutoKernel
-<p align="center"><img width="30%" src="Images/logo.PNG" /></p>
 
 ## Introduction
 Neural networks are now used in a wide variety of applications. Efficient execution of Neural networks on various devices plays a critical role for these applications. Facing the rapid evolution of deep learning algorithms, there are limited qualified programmers to write hand optimized low-level kernels on different hardware platforms. Using automatic optimization tools to generate high-performance implementations become a promising solution.
@@ -8,7 +7,7 @@ AutoKernel began as a research project at OPEN AI LAB. The project is now open s
 
 ## AutoKernel Architecture
 
-![AutoKernel architecture](../Images/architecture.png)
+![](../Images/architecture.png)
 
 AutoKernel consists of three modules：
 
